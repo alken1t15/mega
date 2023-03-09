@@ -21,8 +21,13 @@ public class Card {
 
     private String svv;
 
-    @ManyToOne
-    @JoinColumn(name = "id")
-    private User user;
+//    @ManyToOne
+//    @JoinColumn(name = "id")
+//    private User user;
 
+    public Card(String number, String dataName, String svv) {
+        this.number =number;
+        this.dataName = dataName;
+        this.svv =svv;
+    }
 }

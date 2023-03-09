@@ -29,8 +29,8 @@ public class History {
     @Column(name = "price_sell")
     private Double priceSell;
 
-    @ManyToOne
-    @JoinColumn(name = "id")
-    private User user;
+//    @ManyToOne
+//    @JoinColumn(name = "id")
+//    private User user;
 
 }
