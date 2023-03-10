@@ -5,7 +5,7 @@ import lombok.Getter;
 import java.util.HashMap;
 
 @Getter
-public class BitCoinJson  {
+public class BitCoinJson {
 
     private HashMap<String, Double> bitcoin;
 

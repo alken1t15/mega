@@ -5,4 +5,6 @@ import kz.runtime.backfor_mega.entity.User;
 
 public interface UserService {
     void save(User user);
+
+    User findByEmailAndPass(String email, String pass);
 }

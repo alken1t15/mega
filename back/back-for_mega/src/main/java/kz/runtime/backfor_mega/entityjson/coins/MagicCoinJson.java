@@ -5,6 +5,6 @@ import lombok.Getter;
 import java.util.HashMap;
 
 @Getter
-public class GalaCoinJson {
-    private HashMap<String, Double> gala;
+public class MagicCoinJson {
+    private HashMap<String, Double> magic;
 }

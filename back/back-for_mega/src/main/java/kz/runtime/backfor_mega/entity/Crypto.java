@@ -27,8 +27,4 @@ public class Crypto {
 
     private String name;
 
-//    @ManyToOne
-//    @JoinColumn(name = "id")
-//    private User user;
-
 }

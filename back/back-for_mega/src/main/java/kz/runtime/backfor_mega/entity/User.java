@@ -26,12 +26,14 @@ public class User {
 
     private String phone;
 
-//    @OneToMany(mappedBy = "user")
-//    private List<Card> cardList;
-//
-//    @OneToMany(mappedBy = "user")
-//    private List<History> historyList;
-//
-//    @OneToMany(mappedBy = "user")
-//    private List<Crypto> cryptoList;
+    private String pass;
+
+    private String email;
+
+    @OneToMany(mappedBy = "user")
+    private List<Card> cardList;
+
+    @OneToMany(mappedBy = "user")
+    private List<History> historyList;
+
 }

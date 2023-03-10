@@ -14,4 +14,9 @@ public class UserImp implements UserService{
     public void save(User user) {
         userRepository.save(user);
     }
+
+    @Override
+    public User findByEmailAndPass(String email, String pass) {
+        return userRepository.findByEmailAndPass(email,pass);
+    }
 }

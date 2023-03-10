@@ -14,6 +14,7 @@ public class History {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+
     @Column(name = "block_wallet")
     private String blockWallet;
 
@@ -29,8 +30,8 @@ public class History {
     @Column(name = "price_sell")
     private Double priceSell;
 
-//    @ManyToOne
-//    @JoinColumn(name = "id")
-//    private User user;
+    @ManyToOne
+    @JoinColumn(name = "id_user")
+    private User user;
 
 }
