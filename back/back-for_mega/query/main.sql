@@ -32,8 +32,9 @@ CREATE TABLE history_table (
 );
 CREATE TABLE crypto_table (
   id SERIAL,
-  PRIMARY KEY (id),
   price DECIMAL,
   price_sell DECIMAL,
+  change DECIMAL,
+  dates TIMESTAMP,
   name VARCHAR(255)
 );
