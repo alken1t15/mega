@@ -10,8 +10,8 @@ import java.util.HashMap;
 @Setter
 @ToString
 public class MyObject {
-  private    String id;
-  private   String symbol;
-  private   String name;
-  private   HashMap<String,String> platforms;
+    private String id;
+    private String symbol;
+    private String name;
+    private HashMap<String, String> platforms;
 }

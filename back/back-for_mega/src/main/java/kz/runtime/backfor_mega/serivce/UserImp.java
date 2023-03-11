@@ -6,10 +6,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class UserImp implements UserService{
+public class UserImp implements UserService {
 
     @Autowired
     private UserRepository userRepository;
+
     @Override
     public void save(User user) {
         userRepository.save(user);
@@ -17,6 +18,6 @@ public class UserImp implements UserService{
 
     @Override
     public User findByEmailAndPass(String email, String pass) {
-        return userRepository.findByEmailAndPass(email,pass);
+        return userRepository.findByEmailAndPass(email, pass);
     }
 }

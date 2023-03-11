@@ -91,8 +91,8 @@ public class MyController {
             HashMap<String, Double> arr = FactoryJson.createJsonObject(url, str);
             Crypto crypto = new Crypto();
             crypto.setName(str);
-            System.out.println(url);
-            System.out.println(arr);
+//            System.out.println(url);
+//            System.out.println(arr);
             for (Map.Entry<String, Double> set : arr.entrySet()) {
                 switch (set.getKey()) {
                     case "usd" -> {

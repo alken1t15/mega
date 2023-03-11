@@ -3,12 +3,14 @@ package kz.runtime.backfor_mega.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.List;
 
 @Entity
 @Table(name = "user_table")
 @Data
+@NoArgsConstructor
 public class User {
 
     @Id

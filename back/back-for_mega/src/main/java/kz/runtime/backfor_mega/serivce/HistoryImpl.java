@@ -6,10 +6,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class HistoryImpl implements HistoryService{
+public class HistoryImpl implements HistoryService {
 
     @Autowired
     private HistoryRepository historyRepository;
+
     @Override
     public void save(History history) {
         historyRepository.save(history);

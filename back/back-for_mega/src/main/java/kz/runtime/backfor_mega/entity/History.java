@@ -2,12 +2,14 @@ package kz.runtime.backfor_mega.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 
 @Entity
 @Table(name = "history_table")
 @Data
+@NoArgsConstructor
 public class History {
 
     @Id

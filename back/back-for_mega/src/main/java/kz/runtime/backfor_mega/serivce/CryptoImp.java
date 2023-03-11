@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class CryptoImp implements CryptoService {
     @Autowired
-   private CryptoRepository cryptoRepository;
+    private CryptoRepository cryptoRepository;
 
     @Override
     public void save(Crypto crypto) {

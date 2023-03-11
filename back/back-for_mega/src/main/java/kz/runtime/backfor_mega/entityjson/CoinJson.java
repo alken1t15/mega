@@ -18,7 +18,7 @@ public class CoinJson {
 
 //    private HashMap<String, Double> bitcoin;
 
-//    private HashMap<String, Double> ethereum;
+    //    private HashMap<String, Double> ethereum;
 //
     private HashMap<String, Double> gala;
 //
