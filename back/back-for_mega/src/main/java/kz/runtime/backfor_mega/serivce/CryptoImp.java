@@ -5,6 +5,8 @@ import kz.runtime.backfor_mega.entity.Crypto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class CryptoImp implements CryptoService {
     @Autowired
@@ -14,4 +16,11 @@ public class CryptoImp implements CryptoService {
     public void save(Crypto crypto) {
         cryptoRepository.save(crypto);
     }
+
+    @Override
+    public List<Crypto> findByName(String name) {
+        return cryptoRepository.findByName(name);
+    }
+
+
 }

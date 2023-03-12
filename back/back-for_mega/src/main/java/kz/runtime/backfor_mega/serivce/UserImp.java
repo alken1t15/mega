@@ -5,6 +5,8 @@ import kz.runtime.backfor_mega.entity.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class UserImp implements UserService {
 
@@ -19,5 +21,10 @@ public class UserImp implements UserService {
     @Override
     public User findByEmailAndPass(String email, String pass) {
         return userRepository.findByEmailAndPass(email, pass);
+    }
+
+    @Override
+    public List<User> findAllByEmailAndPass(String email, String pass) {
+        return userRepository.findAllByEmailAndPass(email,pass);
     }
 }

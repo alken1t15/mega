@@ -23,7 +23,7 @@ public class Crypto {
 
     private Double change;
 
-    private LocalDateTime dates;
+    private LocalDateTime date;
 
     private String name;
 

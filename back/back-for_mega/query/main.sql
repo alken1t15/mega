@@ -1,6 +1,7 @@
 CREATE TABLE user_table
 (
     id          SERIAL primary key,
+    user_name VARCHAR(50),
     first_name  VARCHAR(25),
     second_name VARCHAR(25),
     middle_name VARCHAR(25),
@@ -8,7 +9,8 @@ CREATE TABLE user_table
     address     VARCHAR(35),
     pass        VARCHAR(50),
     email       varchar(50),
-    phone       VARCHAR(20)
+    phone       VARCHAR(20),
+    birthday DATE
 );
 
 CREATE TABLE card_table

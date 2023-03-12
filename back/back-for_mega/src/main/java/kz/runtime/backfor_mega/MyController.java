@@ -13,9 +13,11 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -45,27 +47,45 @@ public class MyController {
 
     @GetMapping(path = "/maxim")
     public void handleExampleRequest() {
-        String url = "https://api.coingecko.com/api/v3/coins/list?include_platform=true";
-        RestTemplate restTemplate = new RestTemplate();
-        MyObject[] myObject = restTemplate.getForObject(url, MyObject[].class);
-        for (MyObject m : myObject) {
-            System.out.println(m.getId());
-        }
+//        String url = "https://api.coingecko.com/api/v3/coins/list?include_platform=true";
+//        RestTemplate restTemplate = new RestTemplate();
+//        MyObject[] myObject = restTemplate.getForObject(url, MyObject[].class);
+//        for (MyObject m : myObject) {
+//            System.out.println(m.getId());
+//        }
         insetTableCrypto();
     }
 
+
+    // С формы регистрации получаем userName, pass, email, phone, birthday
     @PostMapping(path = "/register")
     public void testMethod(@RequestBody Registration registration) {
         User user = userService.findByEmailAndPass(registration.getEmail(),registration.getPass());
         if(user == null){
-            user = new User();
-            user.setEmail(registration.getEmail());
-            user.setPhone(registration.getTel());
-            user.setPass(registration.getPass());
+            user = new User(registration.getUserName(),registration.getPass(),registration.getEmail(),registration.getPhone(),registration.getBirthday());
             userService.save(user);
         }else {
             System.out.println("Такой аккаунт есть");
         }
+    }
+
+    @GetMapping(path = "/sign")
+    public User signInUser(@RequestBody Registration registration){
+        List<User> userList = userService.findAllByEmailAndPass(registration.getEmail(),registration.getPass());
+        for(User user : userList){
+            if(user.getEmail().equals(registration.getEmail()) && user.getPass().equals(registration.getPass())){
+                return user;
+            }
+        }
+        return new User();
+    }
+
+    @PostMapping(path = "/getPriceCoin") //@RequestBody String name
+    public Double getPriceCoin(){
+        String name = "bitcoin";
+        List<Crypto> cryptoList = cryptoService.findByName(name);
+//        System.out.println(crypto.getDates());
+        return 0.0;
     }
 
     @GetMapping(path = "/test3")
@@ -102,8 +122,8 @@ public class MyController {
                     case "usd_24h_change" -> crypto.setChange(set.getValue());
                     case "last_updated_at" -> {
                         long seconds = Math.round(set.getValue());
-                        LocalDateTime dateTime = LocalDateTime.ofEpochSecond(seconds, 0, ZoneOffset.UTC);
-                        crypto.setDates(dateTime);
+                        LocalDateTime dateTime = LocalDateTime.ofEpochSecond(seconds, 0, ZoneOffset.ofHours(6));
+                        crypto.setDate(dateTime);
                     }
                 }
             }

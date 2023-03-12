@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Entity
@@ -16,6 +17,8 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @Column(name = "user_name")
+    private String userName;
     @Column(name = "first_name")
     private String firstName;
     @Column(name = "second_name")
@@ -32,10 +35,19 @@ public class User {
 
     private String email;
 
+    private LocalDate birthday;
+
     @OneToMany(mappedBy = "user")
     private List<Card> cardList;
 
     @OneToMany(mappedBy = "user")
     private List<History> historyList;
 
+    public User(String userName, String pass, String email, String phone, LocalDate birthday) {
+        this.userName = userName;
+        this.phone = phone;
+        this.pass = pass;
+        this.email = email;
+        this.birthday = birthday;
+    }
 }
