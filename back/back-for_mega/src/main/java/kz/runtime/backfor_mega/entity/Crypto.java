@@ -23,8 +23,12 @@ public class Crypto {
 
     private Double change;
 
-    private LocalDateTime date;
+
+    private LocalDateTime dates;
 
     private String name;
+
+    @Column(name = "full_name")
+    private String fullName;
 
 }

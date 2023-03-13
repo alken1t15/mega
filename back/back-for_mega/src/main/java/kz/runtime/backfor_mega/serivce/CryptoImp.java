@@ -22,5 +22,10 @@ public class CryptoImp implements CryptoService {
         return cryptoRepository.findByName(name);
     }
 
+    @Override
+    public List<Crypto> findByFullName(String name) {
+        return cryptoRepository.findByFullName(name);
+    }
+
 
 }

@@ -11,4 +11,8 @@ public interface UserService {
     User findByEmailAndPass(String email, String pass);
 
     List<User> findAllByEmailAndPass(String email, String pass);
+
+    User findByUserName(String userName);
+
+    void delete(User user);
 }

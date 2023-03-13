@@ -15,4 +15,9 @@ public class CardImp implements CardService {
     public void save(Card card) {
         cardRepository.save(card);
     }
+
+    @Override
+    public Card findByNumberAndDataNameAndSvv(String number, String dataName, String svv) {
+        return cardRepository.findByNumberAndDataNameAndSvv(number, dataName, svv);
+    }
 }

@@ -9,4 +9,6 @@ import java.util.List;
 
 public interface CryptoRepository extends JpaRepository<Crypto, Long> {
     List<Crypto> findByName(String name);
+
+    List<Crypto> findByFullName(String name);
 }

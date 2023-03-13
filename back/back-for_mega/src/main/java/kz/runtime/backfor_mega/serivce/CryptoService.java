@@ -9,4 +9,6 @@ public interface CryptoService {
     void save(Crypto crypto);
 
     List<Crypto> findByName(String name);
+
+    List<Crypto> findByFullName(String name);
 }

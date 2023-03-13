@@ -25,7 +25,7 @@ public class User {
     private String secondName;
     @Column(name = "middle_name")
     private String middle_name;
-    private Long age;
+    private Integer age;
 
     private String address;
 
@@ -37,11 +37,17 @@ public class User {
 
     private LocalDate birthday;
 
+    @Column(name = "register_account")
+    private LocalDate registerAccount;
+
     @OneToMany(mappedBy = "user")
     private List<Card> cardList;
 
     @OneToMany(mappedBy = "user")
     private List<History> historyList;
+
+    @OneToMany(mappedBy = "user")
+    private List<Wallet> walletList;
 
     public User(String userName, String pass, String email, String phone, LocalDate birthday) {
         this.userName = userName;

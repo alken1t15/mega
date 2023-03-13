@@ -27,4 +27,14 @@ public class UserImp implements UserService {
     public List<User> findAllByEmailAndPass(String email, String pass) {
         return userRepository.findAllByEmailAndPass(email,pass);
     }
+
+    @Override
+    public User findByUserName(String userName) {
+        return userRepository.findByUserName(userName);
+    }
+
+    @Override
+    public void delete(User user) {
+        userRepository.delete(user);
+    }
 }
