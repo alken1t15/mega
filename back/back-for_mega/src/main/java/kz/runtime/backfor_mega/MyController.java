@@ -9,6 +9,7 @@ import kz.runtime.backfor_mega.serivce.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
@@ -17,7 +18,6 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping(path = "user/login")
 @CrossOrigin(origins = "*", allowedHeaders = "*", methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE})
 public class MyController {
 
@@ -36,14 +36,6 @@ public class MyController {
     @Autowired
     private WalletService walletService;
 
-    @GetMapping(path = "/test")
-    public String testMethod() {
-        Card card = new Card("7777777777777777", "05/27", "680");
-        cardService.save(card);
-
-        return "Fdfsd";
-    }
-
     @GetMapping(path = "/maxim")
     public void handleExampleRequest() {
         insetTableCrypto();
@@ -51,18 +43,21 @@ public class MyController {
 
 
     // С формы регистрации получаем userName, pass, email, phone, birthday
-    @PostMapping(path = "/register")
-    public void testMethod(@RequestBody Registration registration) {
+    @PostMapping(path = "/signup")
+    public Boolean testMethod(@RequestBody Registration registration) {
         User user = userService.findByEmailAndPass(registration.getEmail(), registration.getPass());
         if (user == null) {
             user = new User(registration.getUserName(), registration.getPass(), registration.getEmail(), registration.getPhone(), registration.getBirthday());
+            user.setRegisterAccount(LocalDate.now());
             userService.save(user);
+            return true;
         } else {
             System.out.println("Такой аккаунт есть");
+            return false;
         }
     }
 
-    @GetMapping(path = "/sign")
+    @PostMapping(path = "/signin")
     public User signInUser(@RequestBody Registration registration) {
         List<User> userList = userService.findAllByEmailAndPass(registration.getEmail(), registration.getPass());
         for (User user : userList) {
@@ -127,7 +122,7 @@ public class MyController {
         }
     }
 
-    @PostMapping(path = "/edit/card")
+    @PostMapping(path = "/card")
     public Boolean editMyCard(@RequestBody UpdateCard updateCard) {
         Card card = cardService.findByNumberAndDataNameAndSvv(updateCard.getNumber(), updateCard.getDataName(), updateCard.getSvv());
         if (card == null) {
@@ -166,7 +161,7 @@ public class MyController {
     }
 
 
-    @GetMapping(path = "/market")
+    @PostMapping(path = "/market")
     public MainObject getMarket() {
         ArrayList<Market> markets = new ArrayList<>();
         ArrayList<String> nameCoins = new ArrayList<>();
@@ -184,7 +179,7 @@ public class MyController {
             Market market = new Market();
             ArrayList<LocalDateTime> localDateTimes = new ArrayList<>();
             ArrayList<Double> list = new ArrayList<>();
-            market.setName(cryptoList.get(0).getName());
+            market.setName(cryptoList.get(0).getFullName());
             for (Crypto crypto : cryptoList) {
                 localDateTimes.add(crypto.getDates());
                 double roundedNum = Math.round(crypto.getPrice() * 10000.0) / 10000.0;
@@ -200,7 +195,7 @@ public class MyController {
             ListObject listObject = new ListObject();
             listObject.setFullName(crypto.getFullName());
             listObject.setName(crypto.getName());
-            listObject.setNameImg(crypto.getFullName().toLowerCase());
+            listObject.setNameImg(crypto.getName().toLowerCase());
             listObjects.add(listObject);
         }
         rodObject.setListObjects(listObjects);
@@ -210,10 +205,42 @@ public class MyController {
         return mainObject;
     }
 
-    @GetMapping(path = "/getPriceCoins")
-    public List<CoinsList> getPriceCoins() {
+//    @PostMapping(path = "/getPriceCoins")
+//    public List<CoinsList> getPriceCoins() {
+//        ArrayList<CoinsList> coinsLists = new ArrayList<>();
+//        ArrayList<String> nameCoin = new ArrayList<>();
+//        nameCoin.add("Bitcoin");
+//        nameCoin.add("Binancecoin");
+//        nameCoin.add("Binance-usd");
+//        nameCoin.add("Gala");
+//        nameCoin.add("Ethereum");
+//        nameCoin.add("Magic");
+//        for (String name : nameCoin) {
+//            CoinsList coinsList = new CoinsList();
+//            List<Crypto> cryptoList = cryptoService.findByName(name);
+//            Crypto crypto = cryptoList.get(cryptoList.size() - 1);
+//            coinsList.setName(crypto.getName() + "\"USDT");
+//            coinsList.setPrice(crypto.getPrice());
+//            String result = String.format("%.4f", crypto.getChange());
+//            coinsList.setGap(result);
+//            coinsList.setSign(crypto.getChange() >= 0);
+//            coinsLists.add(coinsList);
+//        }
+//        return coinsLists;
+//    }
+
+//    @PostMapping(path = "/")
+//    public Long getPriceCoin() {
+//        String name = "Bitcoin";
+//        List<Crypto> cryptoList = cryptoService.findByFullName(name);
+//        return Math.round(cryptoList.get(cryptoList.size() - 1).getPrice());
+//    }
+
+    @PostMapping(path = "/")
+    public Simple getPriceCoin() {
         ArrayList<CoinsList> coinsLists = new ArrayList<>();
         ArrayList<String> nameCoin = new ArrayList<>();
+        Simple simple = new Simple();
         nameCoin.add("Bitcoin");
         nameCoin.add("Binancecoin");
         nameCoin.add("Binance-usd");
@@ -222,24 +249,21 @@ public class MyController {
         nameCoin.add("Magic");
         for (String name : nameCoin) {
             CoinsList coinsList = new CoinsList();
-            List<Crypto> cryptoList = cryptoService.findByName(name);
+            List<Crypto> cryptoList = cryptoService.findByFullName(name);
             Crypto crypto = cryptoList.get(cryptoList.size() - 1);
+            if (name.equals("Bitcoin")){
+                simple.setPrice(Math.round(crypto.getPrice()));
+            }
             coinsList.setName(crypto.getName() + "\"USDT");
-            coinsList.setPrice(crypto.getPrice());
-            String result = String.format("%.4f", crypto.getChange());
-            System.out.println(result);
+            double roundedNum = Math.round(crypto.getPrice() * 10000.0) / 10000.0;
+            coinsList.setPrice(roundedNum);
+            String result = String.format("%.2f", crypto.getChange());
             coinsList.setGap(result);
             coinsList.setSign(crypto.getChange() >= 0);
             coinsLists.add(coinsList);
         }
-        return coinsLists;
-    }
-
-    @GetMapping(path = "/getPriceCoin")
-    public Double getPriceCoin() {
-        String name = "bitcoin";
-        List<Crypto> cryptoList = cryptoService.findByName(name);
-        return cryptoList.get(cryptoList.size() - 1).getPrice();
+        simple.setCoinsLists(coinsLists);
+        return simple;
     }
 
     @GetMapping(path = "/test3")
