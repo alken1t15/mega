@@ -13,4 +13,9 @@ public class UpdateCard {
     private String crypt;
 
     private Double count;
+
+    private String email;
+
+    private String pass;
+
 }

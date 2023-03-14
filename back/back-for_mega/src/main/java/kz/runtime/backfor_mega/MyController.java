@@ -1,9 +1,7 @@
 package kz.runtime.backfor_mega;
 
-import kz.runtime.backfor_mega.entity.Card;
-import kz.runtime.backfor_mega.entity.Crypto;
-import kz.runtime.backfor_mega.entity.User;
-import kz.runtime.backfor_mega.entity.Wallet;
+import kz.runtime.backfor_mega.dao.HistoryRepository;
+import kz.runtime.backfor_mega.entity.*;
 import kz.runtime.backfor_mega.entityjson.*;
 import kz.runtime.backfor_mega.serivce.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +33,8 @@ public class MyController {
 
     @Autowired
     private WalletService walletService;
+    @Autowired
+    private HistoryRepository historyRepository;
 
     @GetMapping(path = "/maxim")
     public void handleExampleRequest() {
@@ -59,11 +59,9 @@ public class MyController {
 
     @PostMapping(path = "/signin")
     public User signInUser(@RequestBody Registration registration) {
-        List<User> userList = userService.findAllByEmailAndPass(registration.getEmail(), registration.getPass());
-        for (User user : userList) {
-            if (user.getEmail().equals(registration.getEmail()) && user.getPass().equals(registration.getPass())) {
-                return user;
-            }
+        User user = userService.findByEmailAndPass(registration.getEmail(), registration.getPass());
+        if (user != null) {
+            return user;
         }
         return new User();
     }
@@ -83,7 +81,14 @@ public class MyController {
                     return false;
                 }
                 wallet.setCount(sum);
+                wallet.setNameWallet(trade.getWallet());
                 walletService.save(wallet);
+                History history = new History();
+                history.setCounts(trade.getCount());
+                history.setDates(LocalDateTime.now());
+                history.setNameCrypt(trade.getCrypt());
+                history.setNameWallet(trade.getWallet());
+                historyRepository.save(history);
                 return true;
             }
         }
@@ -125,12 +130,14 @@ public class MyController {
     @PostMapping(path = "/card")
     public Boolean editMyCard(@RequestBody UpdateCard updateCard) {
         Card card = cardService.findByNumberAndDataNameAndSvv(updateCard.getNumber(), updateCard.getDataName(), updateCard.getSvv());
+        User user2 = userService.findByEmailAndPass(updateCard.getEmail(), updateCard.getPass());
         if (card == null) {
-            ///UserName НАДО ДОБАВИТЬ
-            cardService.save(new Card(updateCard.getNumber(), updateCard.getDataName(), updateCard.getSvv()));
+            Card card1 = new Card(updateCard.getNumber(), updateCard.getDataName(), updateCard.getSvv());
+            card1.setId(user2.getId());
+            cardService.save(card1);
             return false;
         } else {
-            User user = userService.findByUserName(card.getUser().getUserName());
+            User user = card.getUser();
             List<Wallet> wallets = user.getWalletList();
             for (Wallet wallet : wallets) {
                 if (wallet.getNameCrypt().equals(updateCard.getCrypt())) {
@@ -146,7 +153,6 @@ public class MyController {
             walletService.save(wallet);
             return true;
         }
-        // name_wallet зачем
     }
 
     @PostMapping(path = "/edit/delete/profile")
@@ -205,37 +211,6 @@ public class MyController {
         return mainObject;
     }
 
-//    @PostMapping(path = "/getPriceCoins")
-//    public List<CoinsList> getPriceCoins() {
-//        ArrayList<CoinsList> coinsLists = new ArrayList<>();
-//        ArrayList<String> nameCoin = new ArrayList<>();
-//        nameCoin.add("Bitcoin");
-//        nameCoin.add("Binancecoin");
-//        nameCoin.add("Binance-usd");
-//        nameCoin.add("Gala");
-//        nameCoin.add("Ethereum");
-//        nameCoin.add("Magic");
-//        for (String name : nameCoin) {
-//            CoinsList coinsList = new CoinsList();
-//            List<Crypto> cryptoList = cryptoService.findByName(name);
-//            Crypto crypto = cryptoList.get(cryptoList.size() - 1);
-//            coinsList.setName(crypto.getName() + "\"USDT");
-//            coinsList.setPrice(crypto.getPrice());
-//            String result = String.format("%.4f", crypto.getChange());
-//            coinsList.setGap(result);
-//            coinsList.setSign(crypto.getChange() >= 0);
-//            coinsLists.add(coinsList);
-//        }
-//        return coinsLists;
-//    }
-
-//    @PostMapping(path = "/")
-//    public Long getPriceCoin() {
-//        String name = "Bitcoin";
-//        List<Crypto> cryptoList = cryptoService.findByFullName(name);
-//        return Math.round(cryptoList.get(cryptoList.size() - 1).getPrice());
-//    }
-
     @PostMapping(path = "/")
     public Simple getPriceCoin() {
         ArrayList<CoinsList> coinsLists = new ArrayList<>();
@@ -251,7 +226,7 @@ public class MyController {
             CoinsList coinsList = new CoinsList();
             List<Crypto> cryptoList = cryptoService.findByFullName(name);
             Crypto crypto = cryptoList.get(cryptoList.size() - 1);
-            if (name.equals("Bitcoin")){
+            if (name.equals("Bitcoin")) {
                 simple.setPrice(Math.round(crypto.getPrice()));
             }
             coinsList.setName(crypto.getName() + "\"USDT");
@@ -319,5 +294,24 @@ public class MyController {
 
             cryptoService.save(crypto);
         }
+    }
+
+    @PostMapping(path = "/history")
+    public List<HistoryJson> getHistory(@RequestBody HistoryUpdate historyUpdate) {
+        ArrayList<HistoryJson> historyJsons = new ArrayList<>();
+        User user = userService.findByEmailAndPass(historyUpdate.getEmail(), historyUpdate.getPass());
+        if (user == null) {
+            return historyJsons;
+        }
+        List<History> historyList = user.getHistoryList();
+        for (History history : historyList) {
+            HistoryJson historyJson = new HistoryJson();
+            historyJson.setCount(history.getCounts());
+            historyJson.setNameWallet(history.getNameWallet());
+            historyJson.setDate(history.getDates());
+            historyJson.setNameCrypt(history.getNameCrypt());
+            historyJsons.add(historyJson);
+        }
+        return historyJsons;
     }
 }

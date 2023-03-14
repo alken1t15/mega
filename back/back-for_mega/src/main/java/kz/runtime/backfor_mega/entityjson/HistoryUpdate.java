@@ -5,8 +5,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class UpdatePass {
-    private String userName;
+public class HistoryUpdate {
+    private String email;
     private String pass;
-    private String newPass;
 }

@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "history_table")
@@ -18,19 +19,15 @@ public class History {
 
 
     @Column(name = "block_wallet")
-    private String blockWallet;
+    private String nameWallet;
 
-    @Column(name = "price_date_buy")
-    private LocalDate priceDatBuy;
+    @Column(name = "dates")
+    private LocalDateTime dates;
 
-    @Column(name = "price_date_sell")
-    private LocalDate priceDateSell;
+    @Column(name = "name_crypt")
+    private String nameCrypt;
 
-    @Column(name = "price_buy")
-    private Double priceBuy;
-
-    @Column(name = "price_sell")
-    private Double priceSell;
+    private Double counts;
 
     @ManyToOne
     @JoinColumn(name = "id_user")

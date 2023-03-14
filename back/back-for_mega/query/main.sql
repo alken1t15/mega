@@ -1,16 +1,16 @@
 CREATE TABLE user_table
 (
-    id          SERIAL primary key,
-    user_name   VARCHAR(50),
-    first_name  VARCHAR(25),
-    second_name VARCHAR(25),
-    middle_name VARCHAR(25),
-    age         int4,
-    address     VARCHAR(35),
-    pass        VARCHAR(50),
-    email       varchar(50),
-    phone       VARCHAR(20),
-    birthday    DATE,
+    id               SERIAL primary key,
+    user_name        VARCHAR(50),
+    first_name       VARCHAR(25),
+    second_name      VARCHAR(25),
+    middle_name      VARCHAR(25),
+    age              int4,
+    address          VARCHAR(35),
+    pass             VARCHAR(50),
+    email            varchar(50),
+    phone            VARCHAR(20),
+    birthday         DATE,
     register_account DATE
 );
 
@@ -26,14 +26,13 @@ CREATE TABLE card_table
 
 CREATE TABLE history_table
 (
-    id              SERIAL,
+    id           SERIAL,
     PRIMARY KEY (id),
-    id_user         INT8,
-    block_wallet    VARCHAR(255),
-    price_date_buy  DATE,
-    price_date_sell DATE,
-    price_buy       DECIMAL,
-    price_sell      DECIMAL,
+    id_user      INT8,
+    block_wallet VARCHAR(255),
+    dates   TIMESTAMP,
+    name_crypt   VARCHAR(255),
+    counts       DECIMAL,
     FOREIGN KEY (id_user) REFERENCES user_table (id)
 );
 CREATE TABLE crypto_table
