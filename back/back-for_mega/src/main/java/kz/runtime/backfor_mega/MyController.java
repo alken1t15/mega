@@ -58,12 +58,24 @@ public class MyController {
     }
 
     @PostMapping(path = "/signin")
-    public User signInUser(@RequestBody Registration registration) {
+    public UserJson signInUser(@RequestBody Registration registration) {
         User user = userService.findByEmailAndPass(registration.getEmail(), registration.getPass());
         if (user != null) {
-            return user;
+            UserJson userJson = new UserJson();
+            userJson.setId(user.getId());
+            userJson.setUserName(user.getUserName());
+            userJson.setFirstName(user.getFirstName());
+            userJson.setSecondName(user.getSecondName());
+            userJson.setMiddle_name(user.getMiddle_name());
+            userJson.setAge(user.getAge());
+            userJson.setAddress(user.getAddress());
+            userJson.setPass(user.getPass());
+            userJson.setPhone(user.getPass());
+            userJson.setEmail(user.getEmail());
+            userJson.setBirthday(user.getBirthday());
+            return userJson;
         }
-        return new User();
+        return new UserJson();
     }
 
     // Объект внутри которого другой объект 1 внутри него массив 2 внутри массива объекты 3 внутри объекта 3 поле
@@ -72,7 +84,7 @@ public class MyController {
 
     @PostMapping(path = "/profile/output")
     public Boolean getStatusProfile(@RequestBody Trade trade) {
-        User user = userService.findByUserName(trade.getUserName());
+        User user = userService.findByEmailAndPass(trade.getEmail(),trade.getPass());
         List<Wallet> wallets = user.getWalletList();
         for (Wallet wallet : wallets) {
             if (wallet.getNameCrypt().equals(trade.getCrypt())) {
@@ -114,9 +126,6 @@ public class MyController {
 
     @PostMapping(path = "/profile/private")
     public Boolean editMyPass(@RequestBody UpdatePass updatePass) {
-        System.out.println("fsdfsdf");
-        System.out.println(updatePass.getEmail());
-        System.out.println(updatePass.getPass());
         User user = userService.findByEmailAndPass(updatePass.getEmail(), updatePass.getPass());
         if (user != null) {
             user.setPass(updatePass.getNewPass());
@@ -133,8 +142,10 @@ public class MyController {
         Card card = cardService.findByNumberAndDataNameAndSvv(updateCard.getNumber(), updateCard.getDataName(), updateCard.getSvv());
         User user2 = userService.findByEmailAndPass(updateCard.getEmail(), updateCard.getPass());
         if (card == null) {
+            System.out.println(user2.getEmail());
             Card card1 = new Card(updateCard.getNumber(), updateCard.getDataName(), updateCard.getSvv());
-            card1.setId(user2.getId());
+            System.out.println(user2.getId());
+            card1.setUser(user2);
             cardService.save(card1);
             return false;
         } else {
@@ -151,14 +162,16 @@ public class MyController {
             wallet.setCount(updateCard.getCount());
             wallet.setNameCrypt(updateCard.getCrypt());
             wallet.setUser(user);
+            long rand = (int) (Math.random() * 1000000000000000000L);
+            wallet.setNameWallet(String.valueOf(rand));
             walletService.save(wallet);
             return true;
         }
     }
 
-    @PostMapping(path = "/edit/delete/profile")
-    public Boolean deleteMyProfile(@RequestBody String userName) {
-        User user = userService.findByUserName(userName);
+    @PostMapping(path = "/profile/delete")
+    public Boolean deleteMyProfile(@RequestBody Trade trade) {
+        User user = userService.findByEmailAndPass(trade.getEmail(),trade.getPass());
         if (user == null) {
             return false;
         } else {
@@ -242,11 +255,6 @@ public class MyController {
         return simple;
     }
 
-    @GetMapping(path = "/test3")
-    public String textMethod() {
-        return "jsfdjsdfsdf";
-    }
-
     // BNB, BUSD, USDT, MANERO(XMR), GALA, BETH, ETH, MAGIC, LITECOIN(LTC),
     // TRX(TRON), DASH, ATOM(COSMOS), FTM(FANTOM), 1INCH, LUNC(TERRA CLASSIC),
     // DOGE(DOGECOUIN), ZEC(ZCASH), BTC(BITCOIN), NEAR(NEAR PROTOCOL)
@@ -297,7 +305,7 @@ public class MyController {
         }
     }
 
-    @PostMapping(path = "/history")
+    @PostMapping(path = "/profile/history")
     public List<HistoryJson> getHistory(@RequestBody HistoryUpdate historyUpdate) {
         ArrayList<HistoryJson> historyJsons = new ArrayList<>();
         User user = userService.findByEmailAndPass(historyUpdate.getEmail(), historyUpdate.getPass());
@@ -316,7 +324,7 @@ public class MyController {
         return historyJsons;
     }
 
-    @PostMapping(path = "/profile/portfel")
+    @PostMapping(path = "/profile/briefcase")
     public List<UpdateCrypt> getCryptList(@RequestBody HistoryUpdate historyUpdate) {
         ArrayList<UpdateCrypt> updateCrypts = new ArrayList<>();
         User user = userService.findByEmailAndPass(historyUpdate.getEmail(), historyUpdate.getPass());
