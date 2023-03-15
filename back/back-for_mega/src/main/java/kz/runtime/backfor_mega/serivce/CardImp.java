@@ -20,4 +20,11 @@ public class CardImp implements CardService {
     public Card findByNumberAndDataNameAndSvv(String number, String dataName, String svv) {
         return cardRepository.findByNumberAndDataNameAndSvv(number, dataName, svv);
     }
+
+    @Override
+    public void delete(Card card) {
+        cardRepository.delete(card);
+    }
+
+
 }

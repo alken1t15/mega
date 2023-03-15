@@ -185,6 +185,18 @@ public class MyController {
         if (user == null) {
             return false;
         } else {
+            List<Card> cards = user.getCardList();
+            List<History> historyList = user.getHistoryList();
+            List<Wallet> walletList = user.getWalletList();
+            for(Card card : cards){
+                cardService.delete(card);
+            }
+            for(History history : historyList){
+                historyService.delete(history);
+            }
+            for(Wallet wallet : walletList){
+                walletService.delete(wallet);
+            }
             userService.delete(user);
             return true;
         }

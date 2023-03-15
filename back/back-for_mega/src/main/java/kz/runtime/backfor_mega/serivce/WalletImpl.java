@@ -27,5 +27,10 @@ public class WalletImpl implements WalletService {
         return walletRepository.findByNameWallet(nameWallet);
     }
 
+    @Override
+    public void delete(Wallet wallet) {
+        walletRepository.delete(wallet);
+    }
+
 
 }
