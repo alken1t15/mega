@@ -22,5 +22,10 @@ public class WalletImpl implements WalletService {
         return walletRepository.findAllById(id);
     }
 
+    @Override
+    public Wallet findByNameWallet(String nameWallet) {
+        return walletRepository.findByNameWallet(nameWallet);
+    }
+
 
 }

@@ -93,14 +93,24 @@ public class MyController {
                     return false;
                 }
                 wallet.setCount(sum);
-                wallet.setNameWallet(trade.getWallet());
                 walletService.save(wallet);
+                Wallet wallet1 = walletService.findByNameWallet(trade.getWallet());
+                wallet1.setCount(wallet.getCount()+trade.getCount());
+                walletService.save(wallet1);
                 History history = new History();
                 history.setCounts(trade.getCount());
                 history.setDates(LocalDateTime.now());
                 history.setNameCrypt(trade.getCrypt());
                 history.setNameWallet(trade.getWallet());
+                history.setUser(wallet.getUser());
                 historyRepository.save(history);
+                History history1 = new History();
+                history1.setCounts(trade.getCount());
+                history1.setDates(LocalDateTime.now());
+                history1.setNameCrypt(trade.getCrypt());
+                history1.setNameWallet(wallet1.getNameWallet());
+                history1.setUser(wallet1.getUser());
+                historyRepository.save(history1);
                 return true;
             }
         }
@@ -315,6 +325,7 @@ public class MyController {
         List<History> historyList = user.getHistoryList();
         for (History history : historyList) {
             HistoryJson historyJson = new HistoryJson();
+            historyJson.setId(history.getId());
             historyJson.setCount(history.getCounts());
             historyJson.setNameWallet(history.getNameWallet());
             historyJson.setDate(history.getDates());

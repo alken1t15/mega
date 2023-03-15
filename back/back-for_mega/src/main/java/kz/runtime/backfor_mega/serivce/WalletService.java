@@ -8,4 +8,6 @@ public interface WalletService {
     void save(Wallet wallet);
 
     List<Wallet> findAllById(Long id);
+
+    Wallet findByNameWallet(String nameWallet);
 }

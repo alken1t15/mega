@@ -8,6 +8,9 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 public class HistoryJson {
+
+    private Long id;
+
     private LocalDateTime date;
 
     private String nameWallet;
