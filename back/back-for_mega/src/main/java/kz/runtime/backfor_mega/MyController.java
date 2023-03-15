@@ -95,7 +95,7 @@ public class MyController {
         return false;
     }
 
-    @PostMapping(path = "/edit/profile")
+    @PostMapping(path = "/profile/person")
     public Boolean editMyProfile(@RequestBody UpdateAccount updateAccount) {
         User user = userService.findByUserName(updateAccount.getUserName());
         if (user == null) {
@@ -104,22 +104,23 @@ public class MyController {
             user.setUserName(updateAccount.getUserNameModified());
             user.setFirstName(updateAccount.getFirstName());
             user.setSecondName(updateAccount.getSecondName());
-            user.setMiddle_name(updateAccount.getMiddleName());
+            user.setMiddle_name(updateAccount.getLastName());
             user.setAge(updateAccount.getAge());
-            user.setPhone(updateAccount.getPhone());
             user.setBirthday(updateAccount.getBirthday());
             userService.save(user);
             return true;
         }
     }
 
-    @PostMapping(path = "/edit/pass")
+    @PostMapping(path = "/profile/private")
     public Boolean editMyPass(@RequestBody UpdatePass updatePass) {
-        User user = userService.findByUserName(updatePass.getUserName());
-        if (user == null) {
-            return false;
-        } else if (user.getPass().equals(updatePass.getPass())) {
+        System.out.println("fsdfsdf");
+        System.out.println(updatePass.getEmail());
+        System.out.println(updatePass.getPass());
+        User user = userService.findByEmailAndPass(updatePass.getEmail(), updatePass.getPass());
+        if (user != null) {
             user.setPass(updatePass.getNewPass());
+            System.out.println(updatePass.getNewPass());
             userService.save(user);
             return true;
         } else {
@@ -313,5 +314,23 @@ public class MyController {
             historyJsons.add(historyJson);
         }
         return historyJsons;
+    }
+
+    @PostMapping(path = "/profile/portfel")
+    public List<UpdateCrypt> getCryptList(@RequestBody HistoryUpdate historyUpdate) {
+        ArrayList<UpdateCrypt> updateCrypts = new ArrayList<>();
+        User user = userService.findByEmailAndPass(historyUpdate.getEmail(), historyUpdate.getPass());
+        if (user == null) {
+            return updateCrypts;
+        }
+        List<Wallet> wallets = user.getWalletList();
+        for (Wallet wallet : wallets) {
+            UpdateCrypt updateCrypt = new UpdateCrypt();
+            updateCrypt.setNameCrypt(wallet.getNameCrypt());
+            updateCrypt.setCount(wallet.getCount());
+            updateCrypt.setImgName(updateCrypt.getNameCrypt().toLowerCase());
+            updateCrypts.add(updateCrypt);
+        }
+        return updateCrypts;
     }
 }

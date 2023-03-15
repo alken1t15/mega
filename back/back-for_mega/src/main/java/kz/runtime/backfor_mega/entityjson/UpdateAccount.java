@@ -16,7 +16,7 @@ public class UpdateAccount {
 
     private String secondName;
 
-    private String middleName;
+    private String lastName;
 
     private Integer age;
 
