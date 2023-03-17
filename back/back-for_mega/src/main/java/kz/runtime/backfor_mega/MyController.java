@@ -84,19 +84,31 @@ public class MyController {
 
     @PostMapping(path = "/profile/output")
     public Boolean getStatusProfile(@RequestBody Trade trade) {
-        User user = userService.findByEmailAndPass(trade.getEmail(),trade.getPass());
+        User user = userService.findByEmailAndPass(trade.getEmail(), trade.getPass());
         List<Wallet> wallets = user.getWalletList();
         for (Wallet wallet : wallets) {
             if (wallet.getNameCrypt().equals(trade.getCrypt())) {
                 double sum = wallet.getCount() - trade.getCount();
+                System.out.println(wallet.getCount());
+                System.out.println(trade.getCount());
+                System.out.println(sum);
                 if (sum <= 0) {
                     return false;
                 }
                 wallet.setCount(sum);
                 walletService.save(wallet);
                 Wallet wallet1 = walletService.findByNameWallet(trade.getWallet());
-                wallet1.setCount(wallet.getCount()+trade.getCount());
-                walletService.save(wallet1);
+                if (wallet1 != null) {
+                    wallet1.setCount(wallet1.getCount() + trade.getCount());
+                    walletService.save(wallet1);
+                    History history1 = new History();
+                    history1.setCounts(trade.getCount());
+                    history1.setDates(LocalDateTime.now());
+                    history1.setNameCrypt(trade.getCrypt());
+                    history1.setNameWallet(wallet1.getNameWallet());
+                    history1.setUser(wallet1.getUser());
+                    historyRepository.save(history1);
+                }
                 History history = new History();
                 history.setCounts(trade.getCount());
                 history.setDates(LocalDateTime.now());
@@ -104,17 +116,9 @@ public class MyController {
                 history.setNameWallet(trade.getWallet());
                 history.setUser(wallet.getUser());
                 historyRepository.save(history);
-                History history1 = new History();
-                history1.setCounts(trade.getCount());
-                history1.setDates(LocalDateTime.now());
-                history1.setNameCrypt(trade.getCrypt());
-                history1.setNameWallet(wallet1.getNameWallet());
-                history1.setUser(wallet1.getUser());
-                historyRepository.save(history1);
-                return true;
             }
         }
-        return false;
+        return true;
     }
 
     @PostMapping(path = "/profile/person")
@@ -150,11 +154,11 @@ public class MyController {
     @PostMapping(path = "/card")
     public Boolean editMyCard(@RequestBody UpdateCard updateCard) {
         Card card = cardService.findByNumberAndDataNameAndSvv(updateCard.getNumber(), updateCard.getDataName(), updateCard.getSvv());
+        System.out.println(updateCard.getEmail());
+        System.out.println(updateCard.getPass());
         User user2 = userService.findByEmailAndPass(updateCard.getEmail(), updateCard.getPass());
         if (card == null) {
-            System.out.println(user2.getEmail());
             Card card1 = new Card(updateCard.getNumber(), updateCard.getDataName(), updateCard.getSvv());
-            System.out.println(user2.getId());
             card1.setUser(user2);
             cardService.save(card1);
             return false;
@@ -181,20 +185,20 @@ public class MyController {
 
     @PostMapping(path = "/profile/delete")
     public Boolean deleteMyProfile(@RequestBody Trade trade) {
-        User user = userService.findByEmailAndPass(trade.getEmail(),trade.getPass());
+        User user = userService.findByEmailAndPass(trade.getEmail(), trade.getPass());
         if (user == null) {
             return false;
         } else {
             List<Card> cards = user.getCardList();
             List<History> historyList = user.getHistoryList();
             List<Wallet> walletList = user.getWalletList();
-            for(Card card : cards){
+            for (Card card : cards) {
                 cardService.delete(card);
             }
-            for(History history : historyList){
+            for (History history : historyList) {
                 historyService.delete(history);
             }
-            for(Wallet wallet : walletList){
+            for (Wallet wallet : walletList) {
                 walletService.delete(wallet);
             }
             userService.delete(user);
@@ -265,7 +269,7 @@ public class MyController {
             if (name.equals("Bitcoin")) {
                 simple.setPrice(Math.round(crypto.getPrice()));
             }
-            coinsList.setName(crypto.getName() + "\"USDT");
+            coinsList.setName(crypto.getName() + "/USDT");
             double roundedNum = Math.round(crypto.getPrice() * 10000.0) / 10000.0;
             coinsList.setPrice(roundedNum);
             String result = String.format("%.2f", crypto.getChange());
@@ -337,8 +341,8 @@ public class MyController {
         List<History> historyList = user.getHistoryList();
         for (History history : historyList) {
             HistoryJson historyJson = new HistoryJson();
-            historyJson.setId(history.getId());
             historyJson.setCount(history.getCounts());
+            historyJson.setId(history.getId());
             historyJson.setNameWallet(history.getNameWallet());
             historyJson.setDate(history.getDates());
             historyJson.setNameCrypt(history.getNameCrypt());
