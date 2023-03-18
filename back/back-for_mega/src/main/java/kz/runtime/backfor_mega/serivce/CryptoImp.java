@@ -27,5 +27,4 @@ public class CryptoImp implements CryptoService {
         return cryptoRepository.findByFullName(name);
     }
 
-
 }

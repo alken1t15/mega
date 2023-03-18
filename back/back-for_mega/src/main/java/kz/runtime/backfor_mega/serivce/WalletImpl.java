@@ -32,5 +32,4 @@ public class WalletImpl implements WalletService {
         walletRepository.delete(wallet);
     }
 
-
 }

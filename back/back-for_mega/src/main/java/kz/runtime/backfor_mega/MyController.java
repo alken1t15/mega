@@ -18,6 +18,22 @@ import java.util.Map;
 @RestController
 @CrossOrigin(origins = "*", allowedHeaders = "*", methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE})
 public class MyController {
+  private static ArrayList<String> fullName = new ArrayList<>();
+  private static ArrayList<String> name = new ArrayList<>();
+    static {
+        fullName.add("bitcoin");
+        fullName.add("binancecoin");
+        fullName.add("binance-usd");
+        fullName.add("gala");
+        fullName.add("ethereum");
+        fullName.add("magic");
+        name.add("BTC");
+        name.add("BNB");
+        name.add("BUSD");
+        name.add("GALA");
+        name.add("ETH");
+        name.add("MAGIC");
+    }
 
     @Autowired
     private CardService cardService;
@@ -52,7 +68,6 @@ public class MyController {
             userService.save(user);
             return true;
         } else {
-            System.out.println("Такой аккаунт есть");
             return false;
         }
     }
@@ -89,9 +104,6 @@ public class MyController {
         for (Wallet wallet : wallets) {
             if (wallet.getNameCrypt().equals(trade.getCrypt())) {
                 double sum = wallet.getCount() - trade.getCount();
-                System.out.println(wallet.getCount());
-                System.out.println(trade.getCount());
-                System.out.println(sum);
                 if (sum <= 0) {
                     return false;
                 }
@@ -143,7 +155,6 @@ public class MyController {
         User user = userService.findByEmailAndPass(updatePass.getEmail(), updatePass.getPass());
         if (user != null) {
             user.setPass(updatePass.getNewPass());
-            System.out.println(updatePass.getNewPass());
             userService.save(user);
             return true;
         } else {
@@ -154,8 +165,6 @@ public class MyController {
     @PostMapping(path = "/card")
     public Boolean editMyCard(@RequestBody UpdateCard updateCard) {
         Card card = cardService.findByNumberAndDataNameAndSvv(updateCard.getNumber(), updateCard.getDataName(), updateCard.getSvv());
-        System.out.println(updateCard.getEmail());
-        System.out.println(updateCard.getPass());
         User user2 = userService.findByEmailAndPass(updateCard.getEmail(), updateCard.getPass());
         if (card == null) {
             Card card1 = new Card(updateCard.getNumber(), updateCard.getDataName(), updateCard.getSvv());
@@ -287,20 +296,6 @@ public class MyController {
     // MATIC(POLYGON)
     public void insetTableCrypto() {
         int count = 0;
-        ArrayList<String> fullName = new ArrayList<>();
-        fullName.add("bitcoin");
-        fullName.add("binancecoin");
-        fullName.add("binance-usd");
-        fullName.add("gala");
-        fullName.add("ethereum");
-        fullName.add("magic");
-        ArrayList<String> name = new ArrayList<>();
-        name.add("BTC");
-        name.add("BNB");
-        name.add("BUSD");
-        name.add("GALA");
-        name.add("ETH");
-        name.add("MAGIC");
         String url = null;
         for (var str : fullName) {
             url = "https://api.coingecko.com/api/v3/simple/price?ids=" + str + "&vs_currencies=usd&include_market_cap=true&include_24hr_vol=true&include_24hr_change=true&include_last_updated_at=true&precision=14";

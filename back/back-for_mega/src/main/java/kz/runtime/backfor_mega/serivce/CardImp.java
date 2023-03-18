@@ -26,5 +26,4 @@ public class CardImp implements CardService {
         cardRepository.delete(card);
     }
 
-
 }
