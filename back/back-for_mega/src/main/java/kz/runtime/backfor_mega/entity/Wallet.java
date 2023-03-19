@@ -29,4 +29,11 @@ public class Wallet {
     @ManyToOne
     @JoinColumn(name = "id_user")
     private User user;
+
+    public Wallet(String nameWallet, String nameCrypt, Double count, User user) {
+        this.nameWallet = nameWallet;
+        this.nameCrypt = nameCrypt;
+        this.count = count;
+        this.user = user;
+    }
 }

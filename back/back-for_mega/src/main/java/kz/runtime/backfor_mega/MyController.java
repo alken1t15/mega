@@ -18,8 +18,9 @@ import java.util.Map;
 @RestController
 @CrossOrigin(origins = "*", allowedHeaders = "*", methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE})
 public class MyController {
-  private static ArrayList<String> fullName = new ArrayList<>();
-  private static ArrayList<String> name = new ArrayList<>();
+    private static final ArrayList<String> fullName = new ArrayList<>();
+    private static final ArrayList<String> name = new ArrayList<>();
+
     static {
         fullName.add("bitcoin");
         fullName.add("binancecoin");
@@ -76,19 +77,18 @@ public class MyController {
     public UserJson signInUser(@RequestBody Registration registration) {
         User user = userService.findByEmailAndPass(registration.getEmail(), registration.getPass());
         if (user != null) {
-            UserJson userJson = new UserJson();
-            userJson.setId(user.getId());
-            userJson.setUserName(user.getUserName());
-            userJson.setFirstName(user.getFirstName());
-            userJson.setSecondName(user.getSecondName());
-            userJson.setMiddle_name(user.getMiddle_name());
-            userJson.setAge(user.getAge());
-            userJson.setAddress(user.getAddress());
-            userJson.setPass(user.getPass());
-            userJson.setPhone(user.getPass());
-            userJson.setEmail(user.getEmail());
-            userJson.setBirthday(user.getBirthday());
-            return userJson;
+            //            userJson.setId(user.getId());
+//            userJson.setUserName(user.getUserName());
+//            userJson.setFirstName(user.getFirstName());
+//            userJson.setSecondName(user.getSecondName());
+//            userJson.setMiddle_name(user.getMiddle_name());
+//            userJson.setAge(user.getAge());
+//            userJson.setAddress(user.getAddress());
+//            userJson.setPass(user.getPass());
+//            userJson.setPhone(user.getPass());
+//            userJson.setEmail(user.getEmail());
+//            userJson.setBirthday(user.getBirthday());
+            return new UserJson(user.getId(), user.getUserName(), user.getFirstName(), user.getSecondName(), user.getMiddle_name(), user.getAge(), user.getAddress(), user.getPhone(), user.getPass(), user.getEmail(), user.getBirthday());
         }
         return new UserJson();
     }
@@ -113,20 +113,20 @@ public class MyController {
                 if (wallet1 != null) {
                     wallet1.setCount(wallet1.getCount() + trade.getCount());
                     walletService.save(wallet1);
-                    History history1 = new History();
-                    history1.setCounts(trade.getCount());
-                    history1.setDates(LocalDateTime.now());
-                    history1.setNameCrypt(trade.getCrypt());
-                    history1.setNameWallet(wallet1.getNameWallet());
-                    history1.setUser(wallet1.getUser());
+                    History history1 = new History(trade.getWallet(), LocalDateTime.now(), trade.getCrypt(), trade.getCount(), wallet1.getUser());
+//                    history1.setCounts(trade.getCount());
+//                    history1.setDates(LocalDateTime.now());
+//                    history1.setNameCrypt(trade.getCrypt());
+//                    history1.setNameWallet(wallet1.getNameWallet());
+//                    history1.setUser(wallet1.getUser());
                     historyRepository.save(history1);
                 }
-                History history = new History();
-                history.setCounts(trade.getCount());
-                history.setDates(LocalDateTime.now());
-                history.setNameCrypt(trade.getCrypt());
-                history.setNameWallet(trade.getWallet());
-                history.setUser(wallet.getUser());
+                History history = new History(trade.getWallet(), LocalDateTime.now(), trade.getCrypt(), trade.getCount(), wallet.getUser());
+//                history.setCounts(trade.getCount());
+//                history.setDates(LocalDateTime.now());
+//                history.setNameCrypt(trade.getCrypt());
+//                history.setNameWallet(trade.getWallet());
+//                history.setUser(wallet.getUser());
                 historyRepository.save(history);
             }
         }
@@ -181,12 +181,12 @@ public class MyController {
                     return true;
                 }
             }
-            Wallet wallet = new Wallet();
-            wallet.setCount(updateCard.getCount());
-            wallet.setNameCrypt(updateCard.getCrypt());
-            wallet.setUser(user);
             long rand = (int) (Math.random() * 1000000000000000000L);
-            wallet.setNameWallet(String.valueOf(rand));
+            Wallet wallet = new Wallet(String.valueOf(rand), updateCard.getCrypt(), updateCard.getCount(), user);
+            //           wallet.setCount(updateCard.getCount());
+            //           wallet.setNameCrypt(updateCard.getCrypt());
+//            wallet.setUser(user);
+            //          wallet.setNameWallet(String.valueOf(rand));
             walletService.save(wallet);
             return true;
         }
@@ -247,11 +247,12 @@ public class MyController {
         for (String name : nameCoins) {
             cryptoList = cryptoService.findByFullName(name);
             Crypto crypto = cryptoList.get(0);
-            ListObject listObject = new ListObject();
-            listObject.setFullName(crypto.getFullName());
-            listObject.setName(crypto.getName());
-            listObject.setNameImg(crypto.getName().toLowerCase());
-            listObjects.add(listObject);
+            //           ListObject listObject = new ListObject(crypto.getName(),crypto.getFullName(),crypto.getName().toLowerCase());
+//            listObject.setFullName(crypto.getFullName());
+//            listObject.setName(crypto.getName());
+//            listObject.setNameImg(crypto.getName().toLowerCase());
+//            listObjects.add(listObject);
+            listObjects.add(new ListObject(crypto.getName(), crypto.getFullName(), crypto.getName().toLowerCase()));
         }
         rodObject.setListObjects(listObjects);
         MainObject mainObject = new MainObject();
@@ -335,12 +336,12 @@ public class MyController {
         }
         List<History> historyList = user.getHistoryList();
         for (History history : historyList) {
-            HistoryJson historyJson = new HistoryJson();
-            historyJson.setCount(history.getCounts());
-            historyJson.setId(history.getId());
-            historyJson.setNameWallet(history.getNameWallet());
-            historyJson.setDate(history.getDates());
-            historyJson.setNameCrypt(history.getNameCrypt());
+            HistoryJson historyJson = new HistoryJson(history.getId(), history.getDates(), history.getNameWallet(), history.getNameCrypt(), history.getCounts());
+//            historyJson.setCount(history.getCounts());
+//            historyJson.setId(history.getId());
+//            historyJson.setNameWallet(history.getNameWallet());
+//            historyJson.setDate(history.getDates());
+//            historyJson.setNameCrypt(history.getNameCrypt());
             historyJsons.add(historyJson);
         }
         return historyJsons;
@@ -355,10 +356,10 @@ public class MyController {
         }
         List<Wallet> wallets = user.getWalletList();
         for (Wallet wallet : wallets) {
-            UpdateCrypt updateCrypt = new UpdateCrypt();
-            updateCrypt.setNameCrypt(wallet.getNameCrypt());
-            updateCrypt.setCount(wallet.getCount());
-            updateCrypt.setImgName(updateCrypt.getNameCrypt().toLowerCase());
+            UpdateCrypt updateCrypt = new UpdateCrypt(wallet.getNameCrypt(), wallet.getCount(), wallet.getNameCrypt().toLowerCase());
+//            updateCrypt.setNameCrypt(wallet.getNameCrypt());
+//            updateCrypt.setCount(wallet.getCount());
+//            updateCrypt.setImgName(updateCrypt.getNameCrypt().toLowerCase());
             updateCrypts.add(updateCrypt);
         }
         return updateCrypts;

@@ -14,4 +14,12 @@ public class ListObject {
 
     private String nameImg;
 
+    public ListObject() {
+    }
+
+    public ListObject(String name, String fullName, String nameImg) {
+        this.name = name;
+        this.fullName = fullName;
+        this.nameImg = nameImg;
+    }
 }

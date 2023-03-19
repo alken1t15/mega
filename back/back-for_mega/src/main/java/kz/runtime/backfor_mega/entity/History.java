@@ -33,4 +33,12 @@ public class History {
     @JoinColumn(name = "id_user")
     private User user;
 
+
+    public History(String nameWallet, LocalDateTime dates, String nameCrypt, Double counts, User user) {
+        this.nameWallet = nameWallet;
+        this.dates = dates;
+        this.nameCrypt = nameCrypt;
+        this.counts = counts;
+        this.user = user;
+    }
 }
