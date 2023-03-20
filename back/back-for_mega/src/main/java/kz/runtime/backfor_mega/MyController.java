@@ -21,6 +21,8 @@ public class MyController {
     private static final ArrayList<String> fullName = new ArrayList<>();
     private static final ArrayList<String> name = new ArrayList<>();
 
+    private static final ArrayList<String> nameCoin = new ArrayList<>();
+
     static {
         fullName.add("bitcoin");
         fullName.add("binancecoin");
@@ -34,6 +36,12 @@ public class MyController {
         name.add("GALA");
         name.add("ETH");
         name.add("MAGIC");
+        nameCoin.add("Bitcoin");
+        nameCoin.add("Binancecoin");
+        nameCoin.add("Binance-usd");
+        nameCoin.add("Gala");
+        nameCoin.add("Ethereum");
+        nameCoin.add("Magic");
     }
 
     @Autowired
@@ -219,17 +227,17 @@ public class MyController {
     @PostMapping(path = "/market")
     public MainObject getMarket() {
         ArrayList<Market> markets = new ArrayList<>();
-        ArrayList<String> nameCoins = new ArrayList<>();
+//        ArrayList<String> nameCoins = new ArrayList<>();
         ArrayList<ListObject> listObjects = new ArrayList<>();
         RodObject rodObject = new RodObject();
-        nameCoins.add("Bitcoin");
-        nameCoins.add("Binancecoin");
-        nameCoins.add("Binance-usd");
-        nameCoins.add("Gala");
-        nameCoins.add("Ethereum");
-        nameCoins.add("Magic");
+//        nameCoins.add("Bitcoin");
+//        nameCoins.add("Binancecoin");
+//        nameCoins.add("Binance-usd");
+//        nameCoins.add("Gala");
+//        nameCoins.add("Ethereum");
+//        nameCoins.add("Magic");
         List<Crypto> cryptoList = null;
-        for (String name : nameCoins) {
+        for (String name : nameCoin) {
             cryptoList = cryptoService.findByFullName(name);
             Market market = new Market();
             ArrayList<LocalDateTime> localDateTimes = new ArrayList<>();
@@ -244,7 +252,7 @@ public class MyController {
             market.setPrice(list);
             markets.add(market);
         }
-        for (String name : nameCoins) {
+        for (String name : nameCoin) {
             cryptoList = cryptoService.findByFullName(name);
             Crypto crypto = cryptoList.get(0);
             //           ListObject listObject = new ListObject(crypto.getName(),crypto.getFullName(),crypto.getName().toLowerCase());
@@ -264,14 +272,14 @@ public class MyController {
     @PostMapping(path = "/")
     public Simple getPriceCoin() {
         ArrayList<CoinsList> coinsLists = new ArrayList<>();
-        ArrayList<String> nameCoin = new ArrayList<>();
+//        ArrayList<String> nameCoin = new ArrayList<>();
         Simple simple = new Simple();
-        nameCoin.add("Bitcoin");
-        nameCoin.add("Binancecoin");
-        nameCoin.add("Binance-usd");
-        nameCoin.add("Gala");
-        nameCoin.add("Ethereum");
-        nameCoin.add("Magic");
+//        nameCoin.add("Bitcoin");
+//        nameCoin.add("Binancecoin");
+//        nameCoin.add("Binance-usd");
+//        nameCoin.add("Gala");
+//        nameCoin.add("Ethereum");
+//        nameCoin.add("Magic");
         for (String name : nameCoin) {
             CoinsList coinsList = new CoinsList();
             List<Crypto> cryptoList = cryptoService.findByFullName(name);
