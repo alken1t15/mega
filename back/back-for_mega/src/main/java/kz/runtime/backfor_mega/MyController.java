@@ -81,6 +81,7 @@ public class MyController {
         }
     }
 
+
     @PostMapping(path = "/signin")
     public UserJson signInUser(@RequestBody Registration registration) {
         User user = userService.findByEmailAndPass(registration.getEmail(), registration.getPass());
