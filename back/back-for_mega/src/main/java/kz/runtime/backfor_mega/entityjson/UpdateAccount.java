@@ -2,6 +2,7 @@ package kz.runtime.backfor_mega.entityjson;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 
@@ -23,4 +24,5 @@ public class UpdateAccount {
     private String phone;
 
     private LocalDate birthday;
+
 }

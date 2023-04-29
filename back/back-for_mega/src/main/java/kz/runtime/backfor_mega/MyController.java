@@ -6,7 +6,9 @@ import kz.runtime.backfor_mega.entityjson.*;
 import kz.runtime.backfor_mega.serivce.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
@@ -122,20 +124,22 @@ public class MyController {
     }
 
     @PostMapping(path = "/profile/person")
-    public Boolean editMyProfile(@RequestBody UpdateAccount updateAccount) {
-        User user = userService.findByUserName(updateAccount.getUserName());
-        if (user == null) {
+    public Boolean editMyProfile(//@RequestBody UpdateAccount updateAccount,
+                                 @RequestParam("image") MultipartFile file) {
+        System.out.println(file.getName());
+//        User user = userService.findByUserName(updateAccount.getUserName());
+     //   if (user == null) {
             return false;
-        } else {
-            user.setUserName(updateAccount.getUserNameModified());
-            user.setFirstName(updateAccount.getFirstName());
-            user.setSecondName(updateAccount.getSecondName());
-            user.setMiddle_name(updateAccount.getLastName());
-            user.setAge(updateAccount.getAge());
-            user.setBirthday(updateAccount.getBirthday());
-            userService.save(user);
-            return true;
-        }
+     //   } else {
+//            user.setUserName(updateAccount.getUserNameModified());
+//            user.setFirstName(updateAccount.getFirstName());
+//            user.setSecondName(updateAccount.getSecondName());
+//            user.setMiddle_name(updateAccount.getLastName());
+//            user.setAge(updateAccount.getAge());
+//            user.setBirthday(updateAccount.getBirthday());
+//            userService.save(user);
+ ///           return true;
+ //       }
     }
 
     @PostMapping(path = "/profile/private")
