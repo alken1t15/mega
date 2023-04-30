@@ -4,10 +4,14 @@ import kz.runtime.backfor_mega.dao.HistoryRepository;
 import kz.runtime.backfor_mega.entity.*;
 import kz.runtime.backfor_mega.entityjson.*;
 import kz.runtime.backfor_mega.serivce.*;
+import org.apache.tomcat.util.http.fileupload.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -124,22 +128,49 @@ public class MyController {
     }
 
     @PostMapping(path = "/profile/person")
-    public Boolean editMyProfile(//@RequestBody UpdateAccount updateAccount,
-                                 @RequestParam("image") MultipartFile file) {
-        System.out.println(file.getName());
-//        User user = userService.findByUserName(updateAccount.getUserName());
-     //   if (user == null) {
+    public Boolean editMyProfile(@RequestPart String userName,
+                                 @RequestPart String userNameModified,
+                                 @RequestPart String firstName,
+                                 @RequestPart String secondName,
+                                 @RequestPart String lastName,
+                                 @RequestPart String age,
+                                 @RequestParam("file") MultipartFile image) {
+        User user = userService.findByUserName(userName);
+        if (user == null) {
             return false;
-     //   } else {
-//            user.setUserName(updateAccount.getUserNameModified());
-//            user.setFirstName(updateAccount.getFirstName());
-//            user.setSecondName(updateAccount.getSecondName());
-//            user.setMiddle_name(updateAccount.getLastName());
-//            user.setAge(updateAccount.getAge());
-//            user.setBirthday(updateAccount.getBirthday());
-//            userService.save(user);
- ///           return true;
- //       }
+        } else {
+            user.setUserName(userNameModified);
+            user.setFirstName(firstName);
+            user.setSecondName(secondName);
+            user.setMiddle_name(lastName);
+            user.setAge(Integer.valueOf(age));
+            userService.save(user);
+            System.out.println(image.getOriginalFilename());
+            byte[] bytes = new byte[0];
+            try {
+                bytes = image.getBytes();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+            File file = new File("D:\\Java\\back\\back\\back-for_mega\\image\\");
+            FileOutputStream fos = null;
+            try {
+                fos = new FileOutputStream(file);
+            } catch (FileNotFoundException e) {
+                throw new RuntimeException(e);
+            }
+            try {
+                fos.write(bytes);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+            try {
+                fos.close();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+            return true;
+        }
     }
 
     @PostMapping(path = "/profile/private")
