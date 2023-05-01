@@ -28,6 +28,23 @@ public class UserJson {
 
     private LocalDate birthday;
 
+    private byte[] img;
+
+    public UserJson(Long id, String userName, String firstName, String secondName, String middle_name, Integer age, String address, String phone, String pass, String email, LocalDate birthday, byte[] img) {
+        this.id = id;
+        this.userName = userName;
+        this.firstName = firstName;
+        this.secondName = secondName;
+        this.middle_name = middle_name;
+        this.age = age;
+        this.address = address;
+        this.phone = phone;
+        this.pass = pass;
+        this.email = email;
+        this.birthday = birthday;
+        this.img = img;
+    }
+
     public UserJson(Long id, String userName, String firstName, String secondName, String middle_name, Integer age, String address, String phone, String pass, String email, LocalDate birthday) {
         this.id = id;
         this.userName = userName;

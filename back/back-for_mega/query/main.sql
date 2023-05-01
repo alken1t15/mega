@@ -8,10 +8,11 @@ CREATE TABLE user_table
     age              int4,
     address          VARCHAR(35),
     pass             VARCHAR(50),
-    email            varchar(50),
+    email            VARCHAR(50),
     phone            VARCHAR(20),
     birthday         DATE,
-    register_account DATE
+    register_account DATE,
+    img VARCHAR(255)
 );
 
 CREATE TABLE card_table

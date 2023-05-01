@@ -49,6 +49,8 @@ public class User {
     @OneToMany(mappedBy = "user")
     private List<Wallet> walletList;
 
+    private String img;
+
     public User(String userName, String pass, String email, String phone, LocalDate birthday) {
         this.userName = userName;
         this.phone = phone;

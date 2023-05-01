@@ -1,5 +1,6 @@
 package kz.runtime.backfor_mega;
 
+import jakarta.mail.MessagingException;
 import kz.runtime.backfor_mega.dao.HistoryRepository;
 import kz.runtime.backfor_mega.entity.*;
 import kz.runtime.backfor_mega.entityjson.*;
@@ -9,10 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
@@ -50,22 +48,32 @@ public class MyController {
         nameCoin.add("Magic");
     }
 
-    @Autowired
-    private CardService cardService;
+    private final CardService cardService;
 
-    @Autowired
-    private CryptoService cryptoService;
+    private final CryptoService cryptoService;
 
-    @Autowired
-    private HistoryService historyService;
+    private final HistoryService historyService;
 
-    @Autowired
-    private UserService userService;
+    private final UserService userService;
 
-    @Autowired
-    private WalletService walletService;
-    @Autowired
-    private HistoryRepository historyRepository;
+    private final WalletService walletService;
+
+    private final HistoryRepository historyRepository;
+
+    private final EmailService emailService;
+
+    private final UserServiceProfile userServiceProfile;
+
+    public MyController(CardService cardService, CryptoService cryptoService, HistoryService historyService, UserService userService, WalletService walletService, HistoryRepository historyRepository, EmailService emailService,UserServiceProfile userServiceProfile) {
+        this.cardService = cardService;
+        this.cryptoService = cryptoService;
+        this.historyService = historyService;
+        this.userService = userService;
+        this.walletService = walletService;
+        this.historyRepository = historyRepository;
+        this.emailService = emailService;
+        this.userServiceProfile = userServiceProfile;
+    }
 
     @GetMapping(path = "/maxim")
     public void handleExampleRequest() {
@@ -73,28 +81,15 @@ public class MyController {
     }
 
 
-    // С формы регистрации получаем userName, pass, email, phone, birthday
     @PostMapping(path = "/signup")
-    public Boolean testMethod(@RequestBody Registration registration) {
-        User user = userService.findByEmailAndPass(registration.getEmail(), registration.getPass());
-        if (user == null) {
-            user = new User(registration.getUserName(), registration.getPass(), registration.getEmail(), registration.getPhone(), registration.getBirthday());
-            user.setRegisterAccount(LocalDate.now());
-            userService.save(user);
-            return true;
-        } else {
-            return false;
-        }
+    public Boolean registration(@RequestBody Registration registration) {
+      return userServiceProfile.accountRegistration(registration);
     }
 
 
     @PostMapping(path = "/signin")
     public UserJson signInUser(@RequestBody Registration registration) {
-        User user = userService.findByEmailAndPass(registration.getEmail(), registration.getPass());
-        if (user != null) {
-            return new UserJson(user.getId(), user.getUserName(), user.getFirstName(), user.getSecondName(), user.getMiddle_name(), user.getAge(), user.getAddress(), user.getPhone(), user.getPass(), user.getEmail(), user.getBirthday());
-        }
-        return new UserJson();
+        return userServiceProfile.userAccount(registration);
     }
 
     // Объект внутри которого другой объект 1 внутри него массив 2 внутри массива объекты 3 внутри объекта 3 поле
@@ -135,54 +130,12 @@ public class MyController {
                                  @RequestPart String lastName,
                                  @RequestPart String age,
                                  @RequestParam("file") MultipartFile image) {
-        User user = userService.findByUserName(userName);
-        if (user == null) {
-            return false;
-        } else {
-            user.setUserName(userNameModified);
-            user.setFirstName(firstName);
-            user.setSecondName(secondName);
-            user.setMiddle_name(lastName);
-            user.setAge(Integer.valueOf(age));
-            userService.save(user);
-            System.out.println(image.getOriginalFilename());
-            byte[] bytes = new byte[0];
-            try {
-                bytes = image.getBytes();
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-            File file = new File("D:\\Java\\back\\back\\back-for_mega\\image\\");
-            FileOutputStream fos = null;
-            try {
-                fos = new FileOutputStream(file);
-            } catch (FileNotFoundException e) {
-                throw new RuntimeException(e);
-            }
-            try {
-                fos.write(bytes);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-            try {
-                fos.close();
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-            return true;
-        }
+        return userServiceProfile.changingYourAccount(userName,userNameModified,firstName,secondName,lastName,age,image);
     }
 
     @PostMapping(path = "/profile/private")
     public Boolean editMyPass(@RequestBody UpdatePass updatePass) {
-        User user = userService.findByEmailAndPass(updatePass.getEmail(), updatePass.getPass());
-        if (user != null) {
-            user.setPass(updatePass.getNewPass());
-            userService.save(user);
-            return true;
-        } else {
-            return false;
-        }
+      return userServiceProfile.changingTheAccountPassword(updatePass);
     }
 
     @PostMapping(path = "/card")
@@ -207,31 +160,35 @@ public class MyController {
             long rand = (int) (Math.random() * 1000000000000000000L);
             Wallet wallet = new Wallet(String.valueOf(rand), updateCard.getCrypt(), updateCard.getCount(), user);
             walletService.save(wallet);
-            return true;
+            try {
+                emailService.sendHtmlEmail(user.getEmail(), "Покупка криптовалюты", "<!DOCTYPE html>\n" +
+                        "<html>\n" +
+                        "<head>\n" +
+                        "    <title>Поздравление с покупкой криптовалюты</title>\n" +
+                        "</head>\n" +
+                        "<body>\n" +
+                        "    <h1>Поздравляем!</h1>\n" +
+                        "    <p>Вы успешно купили криптовалюту на нашей платформе. Мы рады, что вы выбрали нас для осуществления своих инвестиций в криптовалюты.</p>\n" +
+                        "    <p>Ваша покупка:</p>\n" +
+                        "    <ul>\n" +
+                        "        <li>Количество: "+ wallet.getCount()+" </li>\n" +
+                        "        <li>Тип: "+ wallet.getNameCrypt()+"</li>\n" +
+                        "    </ul>\n" +
+                        "    <p>Мы надеемся, что ваша покупка принесет вам высокую доходность. Если у вас возникнут какие-либо вопросы или проблемы, пожалуйста, не стесняйтесь обращаться к нашей службе поддержки.</p>\n" +
+                        "    <p>Спасибо за вашу покупку!</p>\n" +
+                        "</body>\n" +
+                        "</html>");
+            } catch (MessagingException e) {
+                throw new RuntimeException(e);
+            }finally {
+                return true;
+            }
         }
     }
 
     @PostMapping(path = "/profile/delete")
     public Boolean deleteMyProfile(@RequestBody Trade trade) {
-        User user = userService.findByEmailAndPass(trade.getEmail(), trade.getPass());
-        if (user == null) {
-            return false;
-        } else {
-            List<Card> cards = user.getCardList();
-            List<History> historyList = user.getHistoryList();
-            List<Wallet> walletList = user.getWalletList();
-            for (Card card : cards) {
-                cardService.delete(card);
-            }
-            for (History history : historyList) {
-                historyService.delete(history);
-            }
-            for (Wallet wallet : walletList) {
-                walletService.delete(wallet);
-            }
-            userService.delete(user);
-            return true;
-        }
+        return userServiceProfile.deletingAUserAccount(trade);
     }
 
 
