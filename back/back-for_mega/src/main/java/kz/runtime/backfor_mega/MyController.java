@@ -128,9 +128,9 @@ public class MyController {
                                  @RequestPart String firstName,
                                  @RequestPart String secondName,
                                  @RequestPart String lastName,
-                                 @RequestPart String age,
+                                 @RequestPart String birthday,
                                  @RequestParam("file") MultipartFile image) {
-        return userServiceProfile.changingYourAccount(userName,userNameModified,firstName,secondName,lastName,age,image);
+        return userServiceProfile.changingYourAccount(userName,userNameModified,firstName,secondName,lastName,birthday,image);
     }
 
     @PostMapping(path = "/profile/private")

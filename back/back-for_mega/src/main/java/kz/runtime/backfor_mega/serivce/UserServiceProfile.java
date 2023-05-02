@@ -15,10 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -86,7 +83,19 @@ public class UserServiceProfile {
                 FileInputStream fileInputStream = new FileInputStream(file);
                 img = fileInputStream.readAllBytes();
             } catch (NullPointerException e) {
-                return new UserJson(user.getId(), user.getUserName(), user.getFirstName(), user.getSecondName(), user.getMiddle_name(), user.getAge(), user.getAddress(), user.getPhone(), user.getPass(), user.getEmail(), user.getBirthday());
+                File file = new File("image/image.png");
+                FileInputStream fileInputStream = null;
+                try {
+                    fileInputStream = new FileInputStream(file);
+                } catch (FileNotFoundException ex) {
+                    throw new RuntimeException(ex);
+                }
+                try {
+                    img = fileInputStream.readAllBytes();
+                } catch (IOException ex) {
+                    throw new RuntimeException(ex);
+                }
+                return new UserJson(user.getId(), user.getUserName(), user.getFirstName(), user.getSecondName(), user.getMiddle_name(), user.getAge(), user.getAddress(), user.getPhone(), user.getPass(), user.getEmail(), user.getBirthday(),img);
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
@@ -110,7 +119,7 @@ public class UserServiceProfile {
             user.setFirstName(firstName);
             user.setSecondName(secondName);
             user.setMiddle_name(lastName);
-            user.setAge(Integer.valueOf(age));
+            user.setBirthday(LocalDate.parse(age));
             try {
                 byte[] bytes;
                 bytes = image.getBytes();
